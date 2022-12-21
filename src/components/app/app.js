@@ -12,7 +12,7 @@ import './app.css';
 export default class App extends Component {
     state = {
         showRandomChar: true,
-        selectedChar: null,
+        selectedChar: 130,
     }
     toggleRandomChar = () => {
         this.setState((state) => {
