@@ -1,18 +1,37 @@
 import React, {Component} from 'react';
 import './charDetails.css';
 import gotService from '../../services/gotService.js';
+import ErrorMessage from '../errorMessage';
+import Spinner from "../spinner";
+
 
 export default class CharDetails extends Component {
 
     gotService = new gotService();
 
     state = {
-        char: null
+        char: null,
+        loading: true,
+        error: false
     }
 
     componentDidMount() {
         this.updateChar();
     }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.charId !== prevProps.charId) {
+            this.updateChar();
+        }
+    }
+
+    onCharDetailsLoaded = (char) => {
+        this.setState({
+            char,
+            loading: false
+        })
+    }
+
 
     updateChar() {
         const {charId} = this.props;
@@ -20,19 +39,43 @@ export default class CharDetails extends Component {
             return;
         }
 
+        this.setState({
+            loading: true
+        })
+
         this.gotService.getCharacter(charId)
-            .then((char) => {
-                this.setState({char})
-            })
+            .then( this.onCharDetailsLoaded )
+            .catch( () => this.onError())
+
+    }
+
+    onError(){
+        this.setState({
+            char: null,
+            error: true
+        })
     }
 
     render() {
 
         if (!this.state.char) {
-            return <span className='select-error'>Please select a character</span>
+            if (!this.state.char && this.state.error) {
+                return <ErrorMessage/>
+            } else if (!this.state.char) {
+                return <span className="select-error">Please select a character</span>
+            }
         }
 
         const {name, gender, born, died, culture} = this.state.char;
+
+        if (this.state.loading) {
+            return (
+                <div className="char-details rounded">
+                    <Spinner/>
+                </div>
+            )
+        }
+    
 
         return (
             <div className="char-details rounded">

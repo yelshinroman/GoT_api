@@ -1,7 +1,13 @@
 import React from "react";
+import img from './error.jpg';
+
 
 const Errormessage = () => {
-    return <span>Something goes wrong</span>
+    return (
+        <>
+            <img src={img}></img>
+            <span>Something goes wrong</span>
+        </>
+    )
 }
-
 export default Errormessage;
